@@ -14,5 +14,6 @@ namespace InversionOfControlDemoUnitTests
         {
             Assert.Pass();
         }
+
     }
 }
