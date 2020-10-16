@@ -14,5 +14,11 @@ namespace InversionOfControlDemoUnitTests
         {
             Assert.Pass();
         }
+
+        [Test]
+        public void Intentionally_Failing_Test()
+        {
+            Assert.Fail();
+        }
     }
 }
