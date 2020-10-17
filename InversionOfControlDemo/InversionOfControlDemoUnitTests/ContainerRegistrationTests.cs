@@ -34,16 +34,25 @@ namespace InversionOfControlDemoUnitTests
         }
 
         [Test]
-        public void AddService__Can_add_transient_singleton_service__does_not_return_error()
+        public void AddService__Can_add_singleton_service__container_contains_type()
         {
             // Arrange
             var containerRegistration = new ContainerRegistration();
-
+            var sqlVatRates = new SqlVatRates();
 
             // Act
-            containerRegistration.AddSingleton<IVarRates, SqlVatRates>();
+            containerRegistration.AddSingleton<IVatRates>(sqlVatRates);
+            var keys = containerRegistration.GetRegisteredSingletonTypes();
 
             // Assert
+            Assert.That(keys, Is.Not.Null);
+            Assert.That(keys.Count, Is.EqualTo(1));
+            
+            foreach(var key in keys)
+            {
+                Assert.That(key.Name, Is.EqualTo("IVatRates"));
+            }
+            
         }
     }
 }

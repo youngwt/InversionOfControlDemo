@@ -7,7 +7,7 @@ namespace InversionOfControlDemo
     public class ContainerRegistration : IContainerRegistration
     {
 
-        static Dictionary<Type, object> _registeredTypes = new Dictionary<Type, object>();
+        private static Dictionary<Type, object> _registeredSingletons = new Dictionary<Type, object>();
 
 
         public void AddSingleton<TService>()
@@ -17,7 +17,7 @@ namespace InversionOfControlDemo
 
         public void AddSingleton<TService>(TService instance)
         {
-            throw new NotImplementedException();
+            _registeredSingletons.Add(typeof(TService), instance);
         }
 
         public void AddSingleton<TService, TConcrete>() where TConcrete : TService
@@ -53,6 +53,15 @@ namespace InversionOfControlDemo
         public IContainerRuntime CreateRuntime()
         {
             return new ContainerRuntime();
+        }
+
+        /// <summary>
+        /// Returns the keys registerd in our internal dictionary. Added for validating the container
+        /// </summary>
+        /// <returns>A collection of keys in for the registration</returns>
+        public Dictionary<Type, object>.KeyCollection GetRegisteredSingletonTypes()
+        {
+            return _registeredSingletons.Keys;
         }
     }
 }

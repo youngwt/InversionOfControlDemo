@@ -4,7 +4,7 @@ using System.Text;
 
 namespace InversionOfControlDemo
 {
-    public class SqlVatRates : IVarRates
+    public class SqlVatRates : IVatRates
     {
     }
 }

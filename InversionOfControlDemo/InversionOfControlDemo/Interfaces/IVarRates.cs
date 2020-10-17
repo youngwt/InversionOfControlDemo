@@ -4,7 +4,7 @@ using System.Text;
 
 namespace InversionOfControlDemo
 {
-    public interface IVarRates
+    public interface IVatRates
     {
 
     }
