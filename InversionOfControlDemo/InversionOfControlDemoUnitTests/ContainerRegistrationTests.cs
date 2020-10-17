@@ -32,5 +32,18 @@ namespace InversionOfControlDemoUnitTests
             Assert.That(runtime, Is.Not.Null);
             Assert.That(runtime, Is.InstanceOf<ContainerRuntime>());
         }
+
+        [Test]
+        public void AddService__Can_add_transient_singleton_service__does_not_return_error()
+        {
+            // Arrange
+            var containerRegistration = new ContainerRegistration();
+
+
+            // Act
+            containerRegistration.AddSingleton<IVarRates, SqlVatRates>();
+
+            // Assert
+        }
     }
 }
