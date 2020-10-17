@@ -94,5 +94,15 @@ namespace InversionOfControlDemo
         {
             return _registeredSingletons.Keys;
         }
+
+        /// <summary>
+        /// Returns the keys registerd in our internal dictionary. Added for validating the container
+        /// Returns the keys registerd in our internal dictionary. Added for validating the container in tests
+        /// </summary>
+        /// <returns>A collection of keys in for the registration</returns>
+        public Dictionary<Type, Func<object>>.KeyCollection GetRegisteredSingletonTypes()
+        {
+            return null;
+        }
     }
 }
