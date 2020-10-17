@@ -4,6 +4,9 @@ using System.Text;
 
 namespace InversionOfControlDemo
 {
+    /// <summary>
+    /// An example implementation
+    /// </summary>
     public class SqlVatRates : IVatRates
     {
     }
