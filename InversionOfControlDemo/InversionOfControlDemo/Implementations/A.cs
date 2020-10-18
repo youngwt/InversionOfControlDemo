@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using InversionOfControlDemo.Interfaces;
 
 namespace InversionOfControlDemo.Implementations
 {
-    class A
+    class A : IA
     {
+        public A() { }
     }
 }

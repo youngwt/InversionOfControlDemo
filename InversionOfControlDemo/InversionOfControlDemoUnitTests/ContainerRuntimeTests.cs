@@ -1,4 +1,6 @@
 ﻿using InversionOfControlDemo;
+using InversionOfControlDemo.Implementations;
+using InversionOfControlDemo.Interfaces;
 using NUnit.Framework;
 
 namespace InversionOfControlDemoUnitTests
@@ -71,6 +73,38 @@ namespace InversionOfControlDemoUnitTests
             // Assert
             Assert.That(vatRates, Is.Not.Null);
             Assert.That(vatRates, Is.InstanceOf<SqlVatRates>());
+        }
+
+        [Test]
+        public void GetService__returns_singleton_with_dependency()
+        {
+            // Arrange
+            var container = new ContainerRegistration();
+            container.AddSingleton<IB>();
+            var runtime = container.CreateRuntime();
+
+            // Act
+            var b = runtime.GetService(typeof(IB));
+
+            // Assert
+            Assert.That(b, Is.Not.Null);
+            Assert.That(b, Is.InstanceOf<B>());
+        }
+
+        [Test]
+        public void GetService__returns_transient_with_dependency()
+        {
+            // Arrange
+            var container = new ContainerRegistration();
+            container.AddTransient<IB>();
+            var runtime = container.CreateRuntime();
+
+            // Act
+            var b = runtime.GetService(typeof(IB));
+
+            // Assert
+            Assert.That(b, Is.Not.Null);
+            Assert.That(b, Is.InstanceOf<B>());
         }
     }
 }

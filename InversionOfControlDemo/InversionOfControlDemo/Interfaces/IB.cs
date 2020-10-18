@@ -4,7 +4,7 @@ using System.Text;
 
 namespace InversionOfControlDemo.Interfaces
 {
-    interface IB : IA
+    interface IB
     {
     }
 }

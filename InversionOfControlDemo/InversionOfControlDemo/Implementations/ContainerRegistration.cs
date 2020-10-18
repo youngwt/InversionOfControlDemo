@@ -28,13 +28,9 @@ namespace InversionOfControlDemo
         /// <typeparam name="TService">The type to map</typeparam>
         public void AddSingleton<TService>()
         {
-            var type = typeof(TService);
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p) && !p.Name.Equals(type.Name));
-
-            var instance =  Activator.CreateInstance(GetTypeFromInterface<TService>());
-
+            var type = GetTypeFromInterface<TService>();
+            var instance = Resolve(type);
+ 
             _registeredTypes.Add(typeof(TService), () => instance);
 
         }
@@ -85,7 +81,7 @@ namespace InversionOfControlDemo
 
             _registeredTypes.Add(typeof(TService), () =>
             {
-                return Activator.CreateInstance(type);
+                return Resolve(type);
             });
         }
 
@@ -137,15 +133,22 @@ namespace InversionOfControlDemo
         /// </summary>
         /// <param name="type">The type to get</param>
         /// <returns></returns>
-        public Func<object> Resolve(Type type)
+        public object Resolve(Type type)
         {
             if(_registeredTypes.ContainsKey(type))
             {
-                return _registeredTypes[type];
-            } else
-            {
-                throw new MissingDependencyException($"Can't find type: {type.Name} in the container");
+                return _registeredTypes[type]();
             }
+
+            var constructor = type.GetConstructors()
+                .OrderByDescending(c => c.GetParameters().Length)
+                .First();
+
+            var args = constructor.GetParameters()
+                .Select(param => Resolve(param.ParameterType))
+                .ToArray();
+
+            return Activator.CreateInstance(type, args);
         }
 
         /// <summary>

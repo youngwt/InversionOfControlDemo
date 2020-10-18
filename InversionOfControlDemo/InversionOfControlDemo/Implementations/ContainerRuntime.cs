@@ -6,8 +6,6 @@ namespace InversionOfControlDemo
 {
     public class ContainerRuntime : IContainerRuntime
     {
-
-        // Prevent instantiation
         public ContainerRuntime(ContainerRegistration containerRegistration ) {
             _container = containerRegistration;
         }
@@ -23,9 +21,7 @@ namespace InversionOfControlDemo
 
         public object GetService(Type serviceType)
         {
-            var func = _container.Resolve(serviceType);
-
-            return func.Invoke();
+            return _container.Resolve(serviceType);
         }
     }
 }
