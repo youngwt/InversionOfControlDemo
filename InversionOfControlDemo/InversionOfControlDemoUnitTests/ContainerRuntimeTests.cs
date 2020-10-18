@@ -1,8 +1,5 @@
 ﻿using InversionOfControlDemo;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace InversionOfControlDemoUnitTests
 {
@@ -10,20 +7,70 @@ namespace InversionOfControlDemoUnitTests
     public class ContainerRuntimeTests
     {
         [Test]
-        public void GetService__can_return_transient_service__returns_object()
+        public void GetService__returns_singleton()
         {
             // Arrange
-
-            //var container = new ContainerRuntime();
+            var container = new ContainerRegistration();
+            container.AddSingleton<IVatRates>();
+            var runtime = container.CreateRuntime();
 
             // Act
-
-            //var options = container.GetService<MyOptions>();
+            var vatRates = runtime.GetService<IVatRates>();
 
             // Assert
-            //Assert.That(options, Is.InstanceOf<MyOptions>());
+            Assert.That(vatRates, Is.Not.Null);
+            Assert.That(vatRates, Is.InstanceOf<SqlVatRates>());
 
+        }
 
+        [Test]
+        public void GetService_with_type_parameter__returns_singleton()
+        {
+            // Arrange
+            var container = new ContainerRegistration();
+            container.AddSingleton<IVatRates>();
+            var runtime = container.CreateRuntime();
+
+            // Act
+            var vatRates = runtime.GetService(typeof(IVatRates));
+
+            // Assert
+            Assert.That(vatRates, Is.Not.Null);
+            Assert.That(vatRates, Is.InstanceOf<SqlVatRates>());
+
+        }
+
+        [Test]
+        public void GetService__returns_transient()
+        {
+            // Arrange
+            var container = new ContainerRegistration();
+            container.AddTransient<IVatRates>();
+            var runtime = container.CreateRuntime();
+
+            // Act
+            var vatRates = runtime.GetService<IVatRates>();
+
+            // Assert
+            Assert.That(vatRates, Is.Not.Null);
+            Assert.That(vatRates, Is.InstanceOf<SqlVatRates>());
+
+        }
+
+        [Test]
+        public void GetService_with_type_parameter__returns_transient()
+        {
+            // Arrange
+            var container = new ContainerRegistration();
+            container.AddTransient<IVatRates>();
+            var runtime = container.CreateRuntime();
+
+            // Act
+            var vatRates = runtime.GetService(typeof(IVatRates));
+
+            // Assert
+            Assert.That(vatRates, Is.Not.Null);
+            Assert.That(vatRates, Is.InstanceOf<SqlVatRates>());
         }
     }
 }
