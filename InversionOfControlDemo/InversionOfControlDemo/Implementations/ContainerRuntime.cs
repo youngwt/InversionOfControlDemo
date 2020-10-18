@@ -16,12 +16,16 @@ namespace InversionOfControlDemo
 
         public TService GetService<TService>()
         {
-            return Activator.CreateInstance<TService>();
+            var type = typeof(TService);
+
+            return (TService) GetService(type);
         }
 
         public object GetService(Type serviceType)
         {
-            throw new NotImplementedException();
+            var func = _container.Resolve(serviceType);
+
+            return func.Invoke();
         }
     }
 }

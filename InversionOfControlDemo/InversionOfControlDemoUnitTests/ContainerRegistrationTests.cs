@@ -103,9 +103,9 @@ namespace InversionOfControlDemoUnitTests
 
             // Act
             _containerUnderTest.AddTransient<IVatRates>();
-            var registeredTypes = _containerUnderTest.GetRegisteredSingletonTypes();
 
             // Assert
+            var registeredTypes = _containerUnderTest.GetRegisteredSingletonTypes();
             ValidateContainerByRegisteredTypes(registeredTypes, new List<String> { "IVatRates" });
         }
 
@@ -118,9 +118,11 @@ namespace InversionOfControlDemoUnitTests
             _containerUnderTest.AddTransient<IVatRates, SqlVatRates>();
 
             // Assert
-
+            var registeredTypes = _containerUnderTest.GetRegisteredSingletonTypes();
+            ValidateContainerByRegisteredTypes(registeredTypes, new List<String> { "IVatRates" });
         }
 
+        [Test]
         public void AddTransient_With_Concrete_And_Factory()
         {
             // Arrange
@@ -129,9 +131,13 @@ namespace InversionOfControlDemoUnitTests
             _containerUnderTest.AddTransient<IVatRates, SqlVatRates>(sp => new SqlVatRates());
 
             // Assert
+            var registeredTypes = _containerUnderTest.GetRegisteredSingletonTypes();
+            ValidateContainerByRegisteredTypes(registeredTypes, new List<String> { "IVatRates" });
+
         }
 
-        public void AddTransiet_With_Type_and_Factory()
+        [Test]
+        public void AddTransient_With_Type_and_Factory()
         {
             // Arrange
 

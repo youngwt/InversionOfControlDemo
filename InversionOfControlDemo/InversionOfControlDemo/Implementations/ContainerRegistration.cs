@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 // There is a single internal method that is only to be used by unit tests
 [assembly: InternalsVisibleTo("InversionOfControlDemoUnitTests")]
 namespace InversionOfControlDemo
-{    
+{
+    /// <summary>
+    /// Contains the mappings of interfaces to implementations
+    /// </summary>
     public class ContainerRegistration : IContainerRegistration
     {
         /// <summary>
@@ -31,8 +33,7 @@ namespace InversionOfControlDemo
                 .SelectMany(s => s.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && !p.Name.Equals(type.Name));
 
-            // In this project we are just going to get the first available type for now
-            var instance =  Activator.CreateInstance(types.FirstOrDefault());
+            var instance =  Activator.CreateInstance(GetTypeFromInterface<TService>());
 
             _registeredTypes.Add(typeof(TService), () => instance);
 
@@ -66,7 +67,10 @@ namespace InversionOfControlDemo
         /// <param name="factoryMethod">The factory Method to map</param>
         public void AddSingleton<TService>(Func<IContainerRuntime, TService> factoryMethod)
         {
-            //_registeredTypes.Add(typeof(TService), factoryMethod);
+            //_registeredTypes.Add(typeof(TService), () =>
+            //{
+
+            //});
 
             throw new NotImplementedException();
         }
@@ -77,9 +81,19 @@ namespace InversionOfControlDemo
         /// <typeparam name="TService">The type to map to</typeparam>
         public void AddTransient<TService>()
         {
-            throw new NotImplementedException();
+            var type = GetTypeFromInterface<TService>();
+
+            _registeredTypes.Add(typeof(TService), () =>
+            {
+                return Activator.CreateInstance(type);
+            });
         }
 
+        /// <summary>
+        /// Add a means to create a transient instance using a factory method
+        /// </summary>
+        /// <typeparam name="TService"></typeparam>
+        /// <param name="factoryMethod"></param>
         public void AddTransient<TService>(Func<IContainerRuntime, TService> factoryMethod)
         {
             throw new NotImplementedException();
@@ -92,7 +106,7 @@ namespace InversionOfControlDemo
         /// <typeparam name="TConcrete">The implementation</typeparam>
         public void AddTransient<TService, TConcrete>() where TConcrete : TService
         {
-            _registeredTypes.Add(typeof(TConcrete), () =>
+            _registeredTypes.Add(typeof(TService), () =>
             {
                 return Activator.CreateInstance<TConcrete>();
             });
@@ -116,6 +130,38 @@ namespace InversionOfControlDemo
         public IContainerRuntime CreateRuntime()
         {
             return new ContainerRuntime(this);
+        }
+
+        /// <summary>
+        /// Resolves a registered type
+        /// </summary>
+        /// <param name="type">The type to get</param>
+        /// <returns></returns>
+        public Func<object> Resolve(Type type)
+        {
+            if(_registeredTypes.ContainsKey(type))
+            {
+                return _registeredTypes[type];
+            } else
+            {
+                throw new MissingDependencyException($"Can't find type: {type.Name} in the container");
+            }
+        }
+
+        /// <summary>
+        /// Gets a concrete implementation based on a provided interface
+        /// </summary>
+        /// <typeparam name="TService"></typeparam>
+        /// <returns></returns>
+        private Type GetTypeFromInterface<TService>()
+        {
+            var interfaceType = typeof(TService);
+            var implementingTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => interfaceType.IsAssignableFrom(p) && !p.Name.Equals(interfaceType.Name));
+
+            // for now we are just going to return the first type found (if any)
+            return implementingTypes.FirstOrDefault();
         }
 
         /// <summary>
